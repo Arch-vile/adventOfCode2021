@@ -41,6 +41,10 @@ class Binary private constructor(private val bits: BitSet, private val bitCount:
         return Binary(copy, bitCount)
     }
 
+    override fun toString(): String {
+        return asString()
+    }
+
     companion object {
         fun from(from: Long, bitCount: Int): Binary {
             if (from < 0) throw Error("Negative numbers not allowed")
