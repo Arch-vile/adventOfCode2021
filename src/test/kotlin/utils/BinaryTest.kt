@@ -8,10 +8,10 @@ internal class BinaryTest {
 
     @Test
     fun from_long() {
-        assertEquals(123L, Binary.from(123L).asLong())
-        assertEquals(0L, Binary.from(0L).asLong())
+        assertEquals(123L, Binary.from(123L,2).asLong())
+        assertEquals(0L, Binary.from(0L,10).asLong())
         assertThrows(Error::class.java) {
-            Binary.from(-1L)
+            Binary.from(-1L,10)
         }
     }
 
@@ -19,31 +19,35 @@ internal class BinaryTest {
     fun from_binary_string() {
         assertEquals(
             38234,
-            Binary.from("1001010101011010".reversed()).asLong()
+            Binary.from("1001010101011010").asLong()
         )
     }
 
     @Test
     fun asBits() {
         assertEquals(
-            listOf(1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0).reversed(),
-            Binary.from(38234).bits()
+            listOf(1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0),
+            Binary.from(38234,16).bits()
+        )
+
+        assertEquals(
+            listOf(0, 0, 0, 0, 0, 0, 0, 1),
+            Binary.from(1,8).bits()
         )
     }
 
     @Test
     fun asString() {
-        assertEquals("0111011", Binary.from(110).asString())
-        assertEquals("01110110", Binary.from(110).asString(8))
-        assertEquals("0111011", Binary.from(110).asString(1))
+        assertEquals("1101110", Binary.from(110,7).asString())
+        assertEquals("01101110", Binary.from(110,8).asString())
     }
 
     @Test
     fun bit() {
         val binary = Binary.from("010101")
-        assertEquals(0, binary.bit(0))
-        assertEquals(1, binary.bit(1))
-        assertEquals(0, binary.bit(2))
+        assertEquals(1, binary.bit(0))
+        assertEquals(0, binary.bit(1))
+        assertEquals(1, binary.bit(2))
 
         // Indexes continue till infinity
         assertEquals(0, binary.bit(33))
@@ -51,16 +55,22 @@ internal class BinaryTest {
 
     @Test
     fun invert() {
+        // Will keep as many bits as before inverting
         assertEquals(
             Binary.from("111000").bits(),
             Binary.from("000111").invert().bits()
         )
 
-        // Invert less
         assertEquals(
-            Binary.from("111").bits(),
-            Binary.from("000111").invert().bits()
+            Binary.from("000").bits(),
+            Binary.from("111").invert().bits()
         )
+    }
+
+    @Test
+    fun shift() {
+
+
     }
 
 }

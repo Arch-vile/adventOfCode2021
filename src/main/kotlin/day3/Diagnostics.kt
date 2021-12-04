@@ -4,15 +4,12 @@ import utils.Binary
 import utils.read
 
 fun main() {
-    val data = read("./src/main/resources/day3Input.txt")
-        // Input binaries are least significant bits first, so need to reverse
-        .map { it.reversed() }
+    val data = read("./src/main/resources/day3SampleInput.txt")
         .map { Binary.from(it) }
 
     var mostCommonBits = mostCommonBits(data)
     val gamma = mostCommonBits.asLong()
     val epsilon = mostCommonBits.invert().asLong()
-
     println(gamma * epsilon)
 }
 
@@ -33,8 +30,8 @@ fun solve(data: List<List<Long>>): List<Long> {
 
 
 private fun mostCommonBits(data: List<Binary>): Binary {
-    // All rows have 12 bits
-    val mostCommon = (0 until 12)
+    // All rows have same amount of bits
+    val mostCommon = (0 until data[0].bits().size)
         // Gives us the vertical bit rows
         .map { index -> data.map { it.bit(index) } }
         // Lets change 0 to -1

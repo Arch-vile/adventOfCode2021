@@ -1,11 +1,13 @@
 package utils
 
+import java.lang.Integer.max
+import java.lang.Integer.min
 import java.util.BitSet
 
 /**
  * All operations work with least significant bit first order
  */
-class Binary private constructor(private val bits: BitSet) {
+class Binary private constructor(private val bits: BitSet, private val bitCount: Int) {
     fun asLong(): Long {
         if (bits.toLongArray().size > 1) {
             throw Error("Bits have expanded over single long value")
@@ -16,21 +18,16 @@ class Binary private constructor(private val bits: BitSet) {
             bits.toLongArray()[0]
     }
 
-    /**
-     * Least significant bit first. No padding zeros at end.
-     */
     fun bits(): List<Int> =
-        (0 until bits.length()).map { bit(it) }
+        (bitCount-1 downTo 0).map { bit(it) }
 
+    /**
+     * Index 0 has the least significant bit
+     */
     fun bit(index: Int): Int = if (bits.get(index)) 1 else 0
 
-    fun asString(): String = asString(0);
-
-    /**
-     * With padded zeros for most significant bits until given length reached
-     */
-    fun asString(padEnd: Int): String {
-        return (0 until maxOf(bits.length(), padEnd))
+    fun asString(): String {
+        return (bitCount-1 downTo 0)
             .map { if (bit(it) == 1) '1' else '0' }
             .joinToString("")
     }
@@ -40,14 +37,14 @@ class Binary private constructor(private val bits: BitSet) {
      */
     fun invert(): Binary {
         val copy = (bits.clone() as BitSet)
-        copy.flip(0, copy.length())
-        return Binary(copy)
+        copy.flip(0, bitCount)
+        return Binary(copy, bitCount)
     }
 
     companion object {
-        fun from(from: Long): Binary {
+        fun from(from: Long, bitCount: Int): Binary {
             if (from < 0) throw Error("Negative numbers not allowed")
-            return Binary(BitSet.valueOf(longArrayOf(from)))
+            return Binary(BitSet.valueOf(longArrayOf(from)),bitCount)
         }
 
         /**
@@ -56,13 +53,15 @@ class Binary private constructor(private val bits: BitSet) {
         fun from(from: String): Binary {
             val bits = BitSet()
             from.forEachIndexed { index, bit ->
+                // Bitset has least significant bits first instead
+                val i = from.length - index - 1
                 when (bit) {
-                    '1' -> bits.set(index)
-                    '0' -> bits.clear(index)
+                    '1' -> bits.set(i)
+                    '0' -> bits.clear(i)
                     else -> throw Error("$bit at index $index is not 0 or 1")
                 }
             }
-            return Binary(bits)
+            return Binary(bits,from.length)
         }
 
         /**
@@ -77,7 +76,7 @@ class Binary private constructor(private val bits: BitSet) {
                     else -> throw Error("$bit at index $index is not 0 or 1")
                 }
             }
-            return Binary(bits)
+            return Binary(bits, from.size)
         }
     }
 
