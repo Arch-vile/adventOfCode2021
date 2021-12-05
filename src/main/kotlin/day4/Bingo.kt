@@ -3,6 +3,7 @@ package day4
 import utils.Matrix
 import utils.read
 
+typealias Sheet = Matrix<Pair<Int, Boolean>>
 fun main() {
     val numbers = read("./src/main/resources/day4Input.txt")
         .take(1)
@@ -11,7 +12,7 @@ fun main() {
 
     val sheets = read("./src/main/resources/day4Input.txt")
         .drop(1)
-        .windowed(6,6)
+        .windowed(6, 6)
         .map { rows ->
             rows.drop(1)
                 .map { row ->
@@ -23,22 +24,31 @@ fun main() {
         }
         .map { Matrix(it) }
 
-    val bingos = numbers.asSequence()
-        .flatMap { number ->
-            sheets.filter { sheet ->
-                val found = sheet.find(Pair(number, false))
-                if (found != null) {
-                    sheet.replace(found, Pair(number, true))
-                    val completedRows = sheet.findRowsByValues { value -> value.second }
-                    val completedColumns = sheet.findColsByValues { value -> value.second }
-                    completedRows.isNotEmpty() || completedColumns.isNotEmpty()
+    var nonWinningSheets = sheets.toMutableList()
+    var winningSheets = mutableListOf<Pair<Int,Sheet>>();
+
+    for (number in numbers) {
+        for (sheet in nonWinningSheets) {
+            val found = sheet.find(Pair(number, false))
+            if (found != null) {
+                sheet.replace(found, Pair(number, true))
+                val completedRows = sheet.findRowsByValues { value -> value.second }
+                val completedColumns = sheet.findColsByValues { value -> value.second }
+                if (completedRows.isNotEmpty() || completedColumns.isNotEmpty()) {
+                    winningSheets.add(Pair(number,sheet))
                 }
-                else false
-            }.map { sheet -> Pair(number,sheet) }
+            }
         }
+        nonWinningSheets.removeAll(winningSheets.map { it.second })
+    }
 
-    val winner = bingos.first()
-    val sumOfMissedNmbr = winner.second.findAll{ value -> !value.second }.map { it.value.first }.sum()
-    println(sumOfMissedNmbr * winner.first)
+    calculateScore(winningSheets.first())
+    calculateScore(winningSheets.last())
 
+}
+
+private fun calculateScore(sheet: Pair<Int, Sheet>) {
+    val sumOfMissedNmbr =
+        sheet.second.findAll { value -> !value.second }.map { it.value.first }.sum()
+    println(sumOfMissedNmbr * sheet.first)
 }
