@@ -24,6 +24,12 @@ internal class BinaryTest {
     }
 
     @Test
+    fun fromList() {
+        assertEquals(38234,
+        Binary.from(listOf(1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0)).asLong())
+    }
+
+    @Test
     fun asBits() {
         assertEquals(
             listOf(1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0),
@@ -45,17 +51,17 @@ internal class BinaryTest {
     @Test
     fun bit() {
         val binary = Binary.from("010101")
-        assertEquals(1, binary.bit(0))
-        assertEquals(0, binary.bit(1))
-        assertEquals(1, binary.bit(2))
+        assertEquals(1, binary.bit(5))
+        assertEquals(0, binary.bit(4))
+        assertEquals(1, binary.bit(3))
 
-        // Indexes continue till infinity
-        assertEquals(0, binary.bit(33))
+        assertThrows(IndexOutOfBoundsException::class.java) {
+            binary.bit(6)
+        }
     }
 
     @Test
     fun invert() {
-        // Will keep as many bits as before inverting
         assertEquals(
             Binary.from("111000").bits(),
             Binary.from("000111").invert().bits()

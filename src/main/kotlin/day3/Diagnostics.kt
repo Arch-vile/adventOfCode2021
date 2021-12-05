@@ -12,8 +12,8 @@ fun main() {
     val epsilon = mostCommonBits.invert().asLong()
     println(gamma * epsilon)
 
-    val oxygen = solve(data, data[0].bits().size - 1, true)
-    val co2 = solve(data, data[0].bits().size-1,false)
+    val oxygen = solve(data, 0, true)
+    val co2 = solve(data, 0,false)
     println(oxygen.asLong()*co2.asLong())
 }
 
@@ -29,7 +29,7 @@ fun solve(data: List<Binary>, i: Int, mostCommon: Boolean): Binary {
         val filtered = data.filter {
             it.bit(i) == bitsToLook.bit(i)
         }
-        return solve(filtered, i - 1, mostCommon);
+        return solve(filtered, i + 1, mostCommon);
     }
 }
 

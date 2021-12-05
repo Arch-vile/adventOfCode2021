@@ -1,11 +1,9 @@
 package utils
 
-import java.lang.Integer.max
-import java.lang.Integer.min
 import java.util.BitSet
 
 /**
- * All operations work with least significant bit first order
+ * All operations assume most significant bit on position/index 0
  */
 class Binary private constructor(private val bits: BitSet, private val bitCount: Int) {
     fun asLong(): Long {
@@ -19,15 +17,14 @@ class Binary private constructor(private val bits: BitSet, private val bitCount:
     }
 
     fun bits(): List<Int> =
-        (bitCount-1 downTo 0).map { bit(it) }
+        (0 until bitCount).map { bit(it) }
 
-    /**
-     * Index 0 has the least significant bit
-     */
-    fun bit(index: Int): Int = if (bits.get(index)) 1 else 0
+    fun bit(index: Int): Int {
+        return if (bits.get(bitCount - index - 1)) 1 else 0
+    }
 
     fun asString(): String {
-        return (bitCount-1 downTo 0)
+        return (0 until bitCount)
             .map { if (bit(it) == 1) '1' else '0' }
             .joinToString("")
     }
@@ -51,13 +48,9 @@ class Binary private constructor(private val bits: BitSet, private val bitCount:
             return Binary(BitSet.valueOf(longArrayOf(from)),bitCount)
         }
 
-        /**
-         * String must have least significant bit first
-         */
         fun from(from: String): Binary {
             val bits = BitSet()
             from.forEachIndexed { index, bit ->
-                // Bitset has least significant bits first instead
                 val i = from.length - index - 1
                 when (bit) {
                     '1' -> bits.set(i)
@@ -68,15 +61,13 @@ class Binary private constructor(private val bits: BitSet, private val bitCount:
             return Binary(bits,from.length)
         }
 
-        /**
-         * Least significant bit first
-         */
         fun from(from: List<Int>): Binary {
             val bits = BitSet()
             from.forEachIndexed { index, bit ->
+                val i = from.size - index - 1
                 when (bit) {
-                    1 -> bits.set(index)
-                    0 -> bits.clear(index)
+                    1 -> bits.set(i)
+                    0 -> bits.clear(i)
                     else -> throw Error("$bit at index $index is not 0 or 1")
                 }
             }
