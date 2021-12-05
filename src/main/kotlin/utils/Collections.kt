@@ -26,14 +26,6 @@ fun <T> combinations(collection: List<T>): Set<List<T>> {
 }
 
 
-fun <T> rotateCW(matrix: List<List<T>>): List<List<T>> {
-  return IntRange(0,matrix[0].size-1)
-    .map {x ->
-      ((matrix.size-1) downTo 0).map { y ->
-        matrix[y][x]
-      }
-    }
-}
 
 
 
