@@ -1,6 +1,7 @@
 package utils
 
 data class Entry<T>(val x: Int, val y: Int, val value: T)
+data class Size(val width: Int, val height: Int)
 
 class Matrix<T>(input: List<List<T>>) {
 
@@ -62,6 +63,29 @@ class Matrix<T>(input: List<List<T>>) {
         })
     }
 
+    /**
+     * Splits this matrix to multiple sub-matrixes determined by a moving window
+     * of given size (width & height). Window starts from position 0,0 and is moved
+     * after by given step (width & height) after each new matrix created.
+     * Each matrix will be of given size unless partial is set to true causing smaller
+     * matrixes to be created if the current window would fall outside of matrix's borders.
+     */
+    fun windowed(size: Size, step: Size, partial: Boolean = false): List<Matrix<T>> {
+        val slidingX = (0 until data[0].size).windowed(size.width, step.width, partial)
+        val slidingY = (0 until data.size).windowed(size.height, step.height, partial)
+        return slidingY
+            .flatMap { yCoords ->
+               slidingX.map { xCoords ->
+                   val data = yCoords.map { y ->
+                      xCoords.map { x ->
+                          data[y][x].value
+                      }
+                   }
+                   Matrix(data)
+               }
+            }
+    }
+
     fun findAll(matcher: (Entry<T>) -> Boolean): List<Entry<T>> {
         val found = mutableListOf<Entry<T>>()
         for (y in 0 until data.size) {
@@ -101,6 +125,7 @@ class Matrix<T>(input: List<List<T>>) {
             return mismatch == null
         } else false
     }
+
 
     companion object {
         private fun <T> initialize(width: Long, height: Long, init: (x: Int, y: Int) -> T): List<List<T>> {
