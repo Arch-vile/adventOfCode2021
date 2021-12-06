@@ -37,8 +37,8 @@ fun solve(): List<Any> {
             val found = sheet.find(Pair(number, false))
             if (found != null) {
                 sheet.replace(found, Pair(number, true))
-                val completedRows = sheet.findRowsByValues { value -> value.second }
-                val completedColumns = sheet.findColsByValues { value -> value.second }
+                val completedRows = sheet.findRowsByValues { entry -> entry.value.second }
+                val completedColumns = sheet.findColsByValues { entry -> entry.value.second }
                 if (completedRows.isNotEmpty() || completedColumns.isNotEmpty()) {
                     winningSheets.add(Pair(number,sheet))
                 }
@@ -55,6 +55,6 @@ fun solve(): List<Any> {
 
 private fun calculateScore(sheet: Pair<Int, Sheet>): Int {
     val sumOfMissedNmbr =
-        sheet.second.findAll { value -> !value.second }.map { it.value.first }.sum()
+        sheet.second.findAll { entry -> !entry.value.second }.map { it.value.first }.sum()
     return sumOfMissedNmbr * sheet.first
 }

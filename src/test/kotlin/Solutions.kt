@@ -12,17 +12,16 @@ class Solutions {
 
     @Test
     fun day2(){
-        assertEquals(day2.solve(), 1580000);
-        assertEquals(day2.solve_part2(), 1251263225)
+        assertEquals( 1580000,day2.solve());
+        assertEquals( 1251263225, day2.solve_part2())
     }
 
     @Test
     fun day3(){
-        assertEquals(day3.solve(),
-            listOf(3242606L,4856080L))
+        assertEquals(listOf(3242606L,4856080L),day3.solve())
     }
     @Test
     fun day4() {
-        assertEquals(solve(), listOf(87456,15561))
+        assertEquals(listOf(87456,15561),solve())
     }
 }
