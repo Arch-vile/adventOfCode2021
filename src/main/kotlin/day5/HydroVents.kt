@@ -24,15 +24,24 @@ fun solve(): List<Int> {
                 )
         }
 
-    val allPointsInLines = lines
+    val onlyStraightLines = lines
         .filter { it.start.x == it.end.x || it.start.y == it.end.y }
         .flatMap { pointsInLine(it) }
-    val seaFloor = Matrix(1000,1000){ x,y -> 0 }
+
+    val alsoDiagonalLines = lines
+        .flatMap { pointsInLine(it) }
+
+    return listOf(
+        countCrossing(onlyStraightLines),
+        countCrossing(alsoDiagonalLines))
+}
+
+private fun countCrossing(allPointsInLines: List<Point>): Int {
+    val seaFloor = Matrix(1000, 1000) { x, y -> 0 }
     allPointsInLines.forEach { point ->
         seaFloor.replace(point.x.toInt(), point.y.toInt()) { entry -> entry.value + 1 }
     }
 
-    return listOf(seaFloor.findAll { it.value >= 2 }.count())
-
+    return seaFloor.findAll { it.value >= 2 }.count()
 }
 
