@@ -4,7 +4,12 @@ import utils.Matrix
 import utils.read
 
 typealias Sheet = Matrix<Pair<Int, Boolean>>
+
 fun main() {
+    solve().forEach { println(it) }
+}
+
+fun solve(): List<Any> {
     val numbers = read("./src/main/resources/day4Input.txt")
         .take(1)
         .flatMap { it.split(",") }
@@ -42,13 +47,14 @@ fun main() {
         nonWinningSheets.removeAll(winningSheets.map { it.second })
     }
 
-    calculateScore(winningSheets.first())
-    calculateScore(winningSheets.last())
-
+    return listOf(
+        calculateScore(winningSheets.first()),
+        calculateScore(winningSheets.last())
+    )
 }
 
-private fun calculateScore(sheet: Pair<Int, Sheet>) {
+private fun calculateScore(sheet: Pair<Int, Sheet>): Int {
     val sumOfMissedNmbr =
         sheet.second.findAll { value -> !value.second }.map { it.value.first }.sum()
-    println(sumOfMissedNmbr * sheet.first)
+    return sumOfMissedNmbr * sheet.first
 }

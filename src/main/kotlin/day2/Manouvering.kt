@@ -2,7 +2,12 @@ package day2
 
 import utils.read
 
-fun main(args: Array<String>) {
+fun main() {
+    println(solve())
+}
+
+
+fun solve(): Int {
     val data = read("./src/main/resources/day2Input.txt")
         .asSequence()
         .map { it.split(" ") }
@@ -20,7 +25,6 @@ fun main(args: Array<String>) {
         .map { it.second  }
         .sum()
 
-    println((down - up) * forward)
-
+    return((down - up) * forward)
 }
 

@@ -4,7 +4,11 @@ import utils.read
 
 data class Manouver(val aim: Int, val depth: Int, val position: Int)
 
-fun main(args: Array<String>) {
+fun main() {
+    println(solve_part2())
+}
+
+fun solve_part2(): Int {
 
     val data = read("./src/main/resources/day2Input.txt")
         .asSequence()
@@ -26,6 +30,6 @@ fun main(args: Array<String>) {
         }
     }
 
-    println(result.depth * result.position)
+    return(result.depth * result.position)
 }
 
