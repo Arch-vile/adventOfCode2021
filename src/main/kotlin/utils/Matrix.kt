@@ -50,6 +50,18 @@ class Matrix<T>(input: List<List<T>>) {
         return rotateCW().keepRowsWithValues(matcher)
     }
 
+    /**
+     * Return tile (part) of this Matrix between the given points. Start point must be with
+     * smaller (or equal) x and y than end point.
+     */
+    fun tile(start: Point, end: Point): Matrix<T> {
+        return Matrix((start.y..end.y).map { y ->
+            (start.x..end.x).map { x ->
+               data[y.toInt()][x.toInt()].value
+            }
+        })
+    }
+
     fun findAll(matcher: (Entry<T>) -> Boolean): List<Entry<T>> {
         val found = mutableListOf<Entry<T>>()
         for (y in 0 until data.size) {
@@ -59,7 +71,6 @@ class Matrix<T>(input: List<List<T>>) {
         }
         return found.toList()
     }
-
 
     fun rotateCW(): Matrix<T> {
         val foo = IntRange(0, data[0].size - 1)
@@ -76,6 +87,20 @@ class Matrix<T>(input: List<List<T>>) {
     }
 
     fun height() = data.size
+
+    override fun equals(other: Any?): Boolean {
+        return if(other is Matrix<*>) {
+            if(data.size != other.data.size)
+                return false
+
+            val mismatch = data.asSequence()
+                .mapIndexed { index, row -> row.equals(other.data[index])  }
+                .filter { !it }
+                .firstOrNull()
+
+            return mismatch == null
+        } else false
+    }
 
     companion object {
         private fun <T> initialize(width: Long, height: Long, init: (x: Int, y: Int) -> T): List<List<T>> {
