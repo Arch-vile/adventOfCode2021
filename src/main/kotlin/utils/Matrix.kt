@@ -23,11 +23,11 @@ class Matrix<T>(input: List<List<T>>) {
         return null;
     }
 
-    fun replace(found: Entry<T>, value: T) {
-        data[found.y][found.x] = value
+    fun replace(current: Entry<T>, value: T) {
+        data[current.y][current.x] = value
     }
 
-    fun replace(found: Long, value: Long, provider: (Entry<T>) -> T) {
+    fun replace(x: Long, y: Long, newValue: (Entry<T>) -> T) {
         TODO("Not yet implemented")
     }
 

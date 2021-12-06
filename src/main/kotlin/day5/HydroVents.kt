@@ -1,5 +1,6 @@
 package day5
 
+import day4.solve
 import utils.Point
 import utils.Matrix
 import utils.read
@@ -7,6 +8,11 @@ import utils.read
 data class Line(val start: Point, val end: Point)
 
 fun main() {
+    solve()
+        .forEach { println(it) }
+}
+
+fun solve(): Int {
     val lines = read("./src/main/resources/day5SampleInput.txt")
         .map { it.split(" ") }
         .map { line ->
@@ -23,6 +29,8 @@ fun main() {
     allPointsInLines.forEach { point ->
         seaFloor.replace(point.x, point.y) { entry -> entry.value + 1 }
     }
+
+    return 1;
 }
 
 fun pointsInLine(line: Line): List<Point> {
