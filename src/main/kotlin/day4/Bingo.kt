@@ -37,9 +37,9 @@ fun solve(): List<Any> {
             val found = sheet.find(Pair(number, false))
             if (found != null) {
                 sheet.replace(found, Pair(number, true))
-                val completedRows = sheet.findRowsByValues { entry -> entry.value.second }
-                val completedColumns = sheet.findColsByValues { entry -> entry.value.second }
-                if (completedRows.isNotEmpty() || completedColumns.isNotEmpty()) {
+                val completedRows = sheet.keepRowsWithValues { entry -> entry.value.second }
+                val completedColumns = sheet.keepColumnsWithValues { entry -> entry.value.second }
+                if (completedRows.height() != 0 || completedColumns.height() != 0) {
                     winningSheets.add(Pair(number,sheet))
                 }
             }

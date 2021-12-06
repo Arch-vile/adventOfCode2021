@@ -7,8 +7,8 @@ class Matrix<T>(input: List<List<T>>) {
     private val data: MutableList<MutableList<Entry<T>>> = mutableListOf()
 
     init {
-        val columns = input[0].size
         for(y in input.indices) {
+            val columns = input[0].size
             val row = mutableListOf<Entry<T>>()
             data.add(row)
             for(x in 0 until columns) {
@@ -39,9 +39,15 @@ class Matrix<T>(input: List<List<T>>) {
     }
 
     // Rows for which the matcher matches for each element in row
-    fun findRowsByValues(matcher: (Entry<T>) -> Boolean): List<List<Entry<T>>> {
-        return data
+    fun keepRowsWithValues(matcher: (Entry<T>) -> Boolean): Matrix<T> {
+        return Matrix(data
             .filter { row -> row.count(matcher) == row.size }
+            .map { row -> row.map { it.value } })
+    }
+
+    // Columns for which the matcher matches for each element in column
+    fun keepColumnsWithValues(matcher: (Entry<T>) -> Boolean): Matrix<T> {
+        return rotateCW().keepRowsWithValues(matcher)
     }
 
     fun findAll(matcher: (Entry<T>) -> Boolean): List<Entry<T>> {
@@ -54,10 +60,6 @@ class Matrix<T>(input: List<List<T>>) {
         return found.toList()
     }
 
-    // Columns for which the matcher matches for each element in column
-    fun findColsByValues(matcher: (Entry<T>) -> Boolean): List<List<Entry<T>>> {
-        return rotateCW().findRowsByValues(matcher)
-    }
 
     fun rotateCW(): Matrix<T> {
         val foo = IntRange(0, data[0].size - 1)
@@ -73,6 +75,7 @@ class Matrix<T>(input: List<List<T>>) {
         return data.joinToString("\n") { row -> row.map { it.value }.toString() };
     }
 
+    fun height() = data.size
 
     companion object {
         private fun <T> initialize(width: Long, height: Long, init: (x: Int, y: Int) -> T): List<List<T>> {
