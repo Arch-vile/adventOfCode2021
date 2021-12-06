@@ -4,17 +4,24 @@ import utils.Binary
 import utils.read
 
 fun main() {
+    solve().forEach { println(it) }
+}
+
+
+fun solve(): List<Long> {
     val data = read("./src/main/resources/day3Input.txt")
         .map { Binary.from(it) }
 
     var mostCommonBits = mostCommonBits(data)
     val gamma = mostCommonBits.asLong()
     val epsilon = mostCommonBits.invert().asLong()
-    println(gamma * epsilon)
 
     val oxygen = solve(data, 0, true)
     val co2 = solve(data, 0,false)
-    println(oxygen.asLong()*co2.asLong())
+
+    return listOf(
+        gamma * epsilon,
+        oxygen.asLong()*co2.asLong())
 }
 
 fun solve(data: List<Binary>, i: Int, mostCommon: Boolean): Binary {
