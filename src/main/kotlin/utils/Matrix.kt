@@ -35,8 +35,8 @@ class Matrix<T>(input: List<List<T>>) {
         data[current.y][current.x] = current.copy(value=value)
     }
 
-    fun replace(x: Long, y: Long, newValue: (Entry<T>) -> T) {
-        TODO("Not yet implemented")
+    fun replace(x: Int, y: Int, newValue: (Entry<T>) -> T) {
+        data[y][x] = data[y][x].copy(value = newValue(data[y][x]))
     }
 
     // Rows for which the matcher matches for each element in row
@@ -66,7 +66,7 @@ class Matrix<T>(input: List<List<T>>) {
     /**
      * Splits this matrix to multiple sub-matrixes determined by a moving window
      * of given size (width & height). Window starts from position 0,0 and is moved
-     * after by given step (width & height) after each new matrix created.
+     * by given step (width & height) after each new matrix created.
      * Each matrix will be of given size unless partial is set to true causing smaller
      * matrixes to be created if the current window would fall outside of matrix's borders.
      */
@@ -129,7 +129,12 @@ class Matrix<T>(input: List<List<T>>) {
 
     companion object {
         private fun <T> initialize(width: Long, height: Long, init: (x: Int, y: Int) -> T): List<List<T>> {
-            TODO("Not yet implemented")
+            return (0 until height)
+                .map { y ->
+                    (0 until width).map { x ->
+                        init(x.toInt(),y.toInt())
+                    }
+                }
         }
     }
 

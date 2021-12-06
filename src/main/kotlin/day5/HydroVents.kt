@@ -1,19 +1,19 @@
 package day5
 
-import day4.solve
+import utils.Line
 import utils.Point
 import utils.Matrix
+import utils.pointsInLine
 import utils.read
 
-data class Line(val start: Point, val end: Point)
 
 fun main() {
     solve()
-        .forEach { println(it) }
+        .let { println(it) }
 }
 
-fun solve(): Int {
-    val lines = read("./src/main/resources/day5SampleInput.txt")
+fun solve(): List<Int> {
+    val lines = read("./src/main/resources/day5Input.txt")
         .map { it.split(" ") }
         .map { line ->
             val firsCoord = line[0].split(",") // ['5','6']
@@ -24,15 +24,15 @@ fun solve(): Int {
                 )
         }
 
-    val allPointsInLines = lines.flatMap { pointsInLine(it) }
-    val seaFloor = Matrix(10,10){ x,y -> 0 }
+    val allPointsInLines = lines
+        .filter { it.start.x == it.end.x || it.start.y == it.end.y }
+        .flatMap { pointsInLine(it) }
+    val seaFloor = Matrix(1000,1000){ x,y -> 0 }
     allPointsInLines.forEach { point ->
-        seaFloor.replace(point.x, point.y) { entry -> entry.value + 1 }
+        seaFloor.replace(point.x.toInt(), point.y.toInt()) { entry -> entry.value + 1 }
     }
 
-    return 1;
+    return listOf(seaFloor.findAll { it.value >= 2 }.count())
+
 }
 
-fun pointsInLine(line: Line): List<Point> {
-   TODO()
-}
