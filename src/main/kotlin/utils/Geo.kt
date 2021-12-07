@@ -8,6 +8,12 @@ data class Line(val start: Point, val end: Point)
 
 // Only for horizontal, vertical and 45 degree lines for now
 fun pointsInLine(line: Line): List<Point> {
+
+   val n = listOf("hello", "paul").sumOf { it.length }
+
+    val a=listOf(1,2)
+
+
     // Horizontal/vertical
     if (line.start.x == line.end.x || line.start.y == line.end.y) {
         return (min(line.start.y, line.end.y)..max(line.start.y, line.end.y))

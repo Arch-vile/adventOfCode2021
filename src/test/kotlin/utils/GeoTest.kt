@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 
 internal class GeoTest {
 
-
     @Test
     fun diagonalLines() {
        assertEquals(
