@@ -29,4 +29,21 @@ internal class CollectionsKtTest {
         ), combinations(listOf(1,2,2)),)
     }
 
+    @Test
+    fun permutations() {
+        assertEquals(
+            setOf(
+                listOf(3, 2, 1),
+                listOf(2, 3, 1),
+                listOf(3, 1, 2),
+                listOf(1, 3, 2),
+                listOf(2, 1, 3),
+                listOf(1, 2, 3)
+            ),
+            permutations(setOf(1, 2, 3))
+        )
+    }
+
+
+
 }
