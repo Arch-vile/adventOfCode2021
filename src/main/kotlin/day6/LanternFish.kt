@@ -3,53 +3,54 @@ package day6
 import utils.read
 
 fun main() {
-    solve()
-        .let { println(it) }
+    solve().let { println(it) }
 }
 
-fun solve(): List<Int> {
+fun solve(): List<Long> {
     var startingFishes = read("./src/main/resources/day6Input.txt")
         .flatMap { it.split(",").map { it.toInt() } }
 
-    val value =
-        startingFishes.sumOf {
-            countDescendants(256, 1, it)
+    return listOf(countFish(startingFishes, 80), countFish(startingFishes, 256))
+}
+
+private fun countFish(startingFishes: List<Int>, days: Int): Long {
+    val cache = mutableMapOf<String, Long>()
+
+    // ticker only matters for the initial ones
+    fun countDescendants(totalDays: Int, dayNow: Int, ticker: Int): Long {
+
+        if (dayNow > totalDays) {
+            return 0;
         }
 
-    println(value)
-    return listOf()
-}
+        if (cache.contains("$dayNow,$ticker")) {
+            return cache["$dayNow,$ticker"]!!
+        }
 
-val cache = mutableMapOf<String, Long>()
+        val firstReroduceOn = dayNow + ticker
+        val daysOnWhichIReproduce =
+            listOf(firstReroduceOn).plus(
+                (firstReroduceOn + 7..totalDays step 7)
+            )
 
-// ticker only matters for the initial ones
-fun countDescendants(totalDays: Int, dayNow: Int, ticker: Int): Long {
+        // Myself
+        val result = 1 +
+                // all my children and their descendants
+                daysOnWhichIReproduce.sumOf { dayOfReproduce ->
+                    countDescendants(totalDays, dayOfReproduce, 9)
+                }
 
-    if (dayNow > totalDays) {
-        return 0;
+        cache.put("$dayNow,$ticker", result)
+
+        return result
     }
 
-    if (cache.contains("$dayNow,$ticker")) {
-        return cache["$dayNow,$ticker"]!!
+    return startingFishes.sumOf {
+        countDescendants(days, 1, it)
     }
-
-    val firstReroduceOn = dayNow + ticker
-    val daysOnWhichIReproduce =
-        listOf(firstReroduceOn).plus(
-            (firstReroduceOn + 7..totalDays step 7)
-        )
-
-    // Myself
-    val result = 1 +
-            // all my children and their descendants
-            daysOnWhichIReproduce.sumOf { dayOfReproduce ->
-                countDescendants(totalDays, dayOfReproduce, 9)
-            }
-
-    cache.put("$dayNow,$ticker", result)
-
-    return result
 }
+
+
 
 private fun reproduce(
     days: Int,

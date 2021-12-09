@@ -32,6 +32,6 @@ class Solutions {
 
     @Test
     fun day6() {
-        assertEquals(listOf(365131),day6.solve())
+        assertEquals(listOf(365131,1650309278600),day6.solve())
     }
 }
