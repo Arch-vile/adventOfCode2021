@@ -2,6 +2,7 @@ package day8
 
 import utils.permutations
 import utils.read
+import utils.sort
 
 data class SegmentData(val input: List<String>, val output: List<String>)
 
@@ -84,4 +85,3 @@ fun solvePart1(): Int {
 
 }
 
-fun sort(value: String) = value.toCharArray().sorted().joinToString("")

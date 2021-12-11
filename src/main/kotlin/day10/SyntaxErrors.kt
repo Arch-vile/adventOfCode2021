@@ -3,20 +3,18 @@ package day10
 import utils.read
 
 fun main( ) {
-    solve()
+    solve().let { println(it) }
 }
 
 fun solve(): List<Int> {
 
     val input =
-        read("./src/main/resources/day10Input.txt")
-//        listOf("{([(<{}[<>[]}>{[]{[(<()>")
+        read("./src/main/resources/day10SampleInput.txt")
             .map { it.toCharArray() }
 
-    val failedClosings = input.map { checkClosings(it) }
-
-    val failureScore = failedClosings
-        .map { when (it) {
+    val syntaxChecks = input.map { checkSyntax(it) }
+    val failureScore = syntaxChecks
+        .map { when (it.prematureClose) {
             ')' -> 3
             ']' -> 57
             '}' -> 1197
@@ -25,12 +23,33 @@ fun solve(): List<Int> {
         } }
         .sum()
 
-    println(failureScore)
+    val autocompleteScores = syntaxChecks
+        .filter { it.prematureClose == null }
+        .map {
+            balanceChunks(it.openChunks)
+        }.sorted()
 
-    return listOf(failureScore)
+    val autocompleteScore = autocompleteScores[autocompleteScores.size/2]
+    return listOf(failureScore, autocompleteScore)
 }
 
-private fun checkClosings(input: CharArray): Char? {
+fun balanceChunks(openChunks: List<Char>): Int {
+    return openChunks.reversed()
+        .map {
+            when(it) {
+                '(' -> 1
+                '[' -> 2
+                '{' -> 3
+                '<' -> 4
+                else -> 0
+            }
+        }
+        .reduce { acc, next -> acc*5 + next  }
+}
+
+data class SyntaxCheck(val prematureClose: Char?, val openChunks: List<Char>)
+
+private fun checkSyntax(input: CharArray): SyntaxCheck {
     val balanced = mutableListOf<Char>()
     var failedClose: Char? = null
     for (next in input) {
@@ -54,5 +73,5 @@ private fun checkClosings(input: CharArray): Char? {
         }
         else balanced.add(next)
     }
-    return failedClose
+    return SyntaxCheck(failedClose, balanced)
 }
