@@ -1,5 +1,6 @@
 import day4.solve
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestTemplate
 import kotlin.test.assertEquals
 
 class Solutions {
@@ -33,5 +34,10 @@ class Solutions {
     @Test
     fun day6() {
         assertEquals(listOf(365131,1650309278600),day6.solve())
+    }
+
+    @Test
+    fun day8() {
+        assertEquals(listOf(261,987553),day8.solve())
     }
 }

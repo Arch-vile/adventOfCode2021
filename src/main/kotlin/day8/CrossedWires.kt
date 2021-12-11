@@ -7,29 +7,30 @@ data class SegmentData(val input: List<String>, val output: List<String>)
 
 
 fun main() {
-    solve_part2()
+    solve()
         .let { println(it) }
 }
 
-val allSegments = "abcdefg"
-val zero = "abcefg"
-val one = "cf"
-val two = "acdeg"
-val three = "acdfg"
-val four = "bcdf"
-val five = "abdfg"
-val six = "abdefg"
-val seven = "acf"
-val eight = "abcdefg"
-val nine = "abcdfg"
+const val allSegments = "abcdefg"
+const val zero = "abcefg"
+const val one = "cf"
+const val two = "acdeg"
+const val three = "acdfg"
+const val four = "bcdf"
+const val five = "abdfg"
+const val six = "abdefg"
+const val seven = "acf"
+const val eight = "abcdefg"
+const val nine = "abcdfg"
 val allNumbers = listOf(zero, one, two, three, four, five, six, seven, eight, nine)
 
-fun sort(value: String) = value.toCharArray().sorted().joinToString("")
+fun solve(): List<Int> {
+   return listOf(solvePart1(), solvePart2())
+}
 
-fun solve_part2(): Int {
+fun solvePart2(): Int {
     var readings =
-//        read("./src/main/resources/day8Input.txt")
-        listOf("acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf")
+        read("./src/main/resources/day8Input.txt")
             .map { it.split(" | ") }
             .map {
                 SegmentData(
@@ -68,7 +69,7 @@ private fun decode(
         .replace(decoder[6], 'G').toLowerCase()
 )
 
-fun solve(): Int {
+fun solvePart1(): Int {
     var segmentData =
         read("./src/main/resources/day8Input.txt")
             .map { it.split(" | ") }
@@ -83,3 +84,4 @@ fun solve(): Int {
 
 }
 
+fun sort(value: String) = value.toCharArray().sorted().joinToString("")
