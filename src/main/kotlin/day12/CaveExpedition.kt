@@ -40,30 +40,8 @@ data class Cave(var accessTo: MutableList<Cave>, val name: String) {
 }
 
 fun solve(): List<Int> {
-
-    // Jos jokin ei toimi, tarkista nama
-    // Onko isoja luolia vierekkain? loputon looppi.
-
     val caves = mutableMapOf<String, Cave>()
-
-
     read("./src/main/resources/day12Input.txt")
-//        listOf(
-//        "start-A",
-//        "start-b",
-//        "A-c",
-//        "A-b",
-//        "b-d",
-//        "A-end",
-//        "b-end"
-//    )
-//    listOf(
-//        "start-a",
-//        "B-start",
-//        "a-B",
-//        "a-end",
-//        "B-end"
-//    )
         .map { it.split("-") }
         .forEach {
             val source = caves.getOrDefault(it[0], Cave(mutableListOf(), it[0]))
@@ -74,26 +52,42 @@ fun solve(): List<Int> {
             caves.put(target.name, target)
         }
 
-    val routes = findRoutes(listOf(), caves["start"]!!)
-
-    val routesReachingEnd = routes.filter { it.contains(caves["end"]) }
-        .count()
-
-    return listOf(routesReachingEnd)
-
+    return listOf(
+        countRoutes(false, caves["start"]!!, caves["end"]!!),
+        countRoutes(true, caves["start"]!!, caves["end"]!!))
 }
 
-fun findRoutes(path: List<Cave>, cave: Cave): MutableList<MutableList<Cave>> {
+fun countRoutes(allowDuplicates: Boolean, start: Cave, end: Cave): Int {
+    val routes = findRoutes(allowDuplicates, listOf(),start)
+    val routesReachingEnd = routes.filter { it.contains(end) }
+    return routesReachingEnd.count()
+}
+
+fun findRoutes(allowDuplicates: Boolean, path: List<Cave>, cave: Cave): MutableList<MutableList<Cave>> {
     if (cave.accessTo.isEmpty()) {
         return mutableListOf(mutableListOf(cave))
     }
 
     val newPath = path.plus(cave)
     val childRoutes = cave.accessTo
-        .filter { !(it.isSmall() && newPath.contains(it)) }
+        .filter {
+           if(it.isSmall()) {
+               if(newPath.contains(it))
+                   allowDuplicates && !hasDoubleSmall(newPath)
+               else
+                   true
+           } else true
+        }
         .flatMap {
-            findRoutes(newPath, it)
+            findRoutes(allowDuplicates, newPath, it)
         }
     childRoutes.forEach { it.add(0, cave) }
     return childRoutes.toMutableList()
+}
+
+fun hasDoubleSmall(newPath: List<Cave>): Boolean {
+    return newPath
+        .filter { it.isSmall() }
+        .map { it.name }
+        .distinct().count() != newPath.filter { it.isSmall() }.count()
 }
