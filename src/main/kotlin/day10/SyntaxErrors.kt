@@ -6,10 +6,10 @@ fun main( ) {
     solve().let { println(it) }
 }
 
-fun solve(): List<Int> {
+fun solve(): List<Long> {
 
     val input =
-        read("./src/main/resources/day10SampleInput.txt")
+        read("./src/main/resources/day10Input.txt")
             .map { it.toCharArray() }
 
     val syntaxChecks = input.map { checkSyntax(it) }
@@ -30,18 +30,18 @@ fun solve(): List<Int> {
         }.sorted()
 
     val autocompleteScore = autocompleteScores[autocompleteScores.size/2]
-    return listOf(failureScore, autocompleteScore)
+    return listOf(failureScore.toLong(), autocompleteScore)
 }
 
-fun balanceChunks(openChunks: List<Char>): Int {
+fun balanceChunks(openChunks: List<Char>): Long {
     return openChunks.reversed()
         .map {
             when(it) {
-                '(' -> 1
-                '[' -> 2
-                '{' -> 3
-                '<' -> 4
-                else -> 0
+                '(' -> 1L
+                '[' -> 2L
+                '{' -> 3L
+                '<' -> 4L
+                else -> 0L
             }
         }
         .reduce { acc, next -> acc*5 + next  }
