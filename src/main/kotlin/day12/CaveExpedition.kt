@@ -1,5 +1,7 @@
 package day12
 
+import utils.read
+
 fun main() {
     solve()
         .let { println(it) }
@@ -37,13 +39,15 @@ data class Cave(var accessTo: MutableList<Cave>, val name: String) {
 
 }
 
-fun solve() {
+fun solve(): List<Int> {
 
     // Jos jokin ei toimi, tarkista nama
     // Onko isoja luolia vierekkain? loputon looppi.
 
     val caves = mutableMapOf<String, Cave>()
 
+
+    read("./src/main/resources/day12Input.txt")
 //        listOf(
 //        "start-A",
 //        "start-b",
@@ -53,13 +57,13 @@ fun solve() {
 //        "A-end",
 //        "b-end"
 //    )
-    listOf(
-        "start-a",
-        "B-start",
-        "a-B",
-        "a-end",
-        "B-end"
-    )
+//    listOf(
+//        "start-a",
+//        "B-start",
+//        "a-B",
+//        "a-end",
+//        "B-end"
+//    )
         .map { it.split("-") }
         .forEach {
             val source = caves.getOrDefault(it[0], Cave(mutableListOf(), it[0]))
@@ -71,7 +75,12 @@ fun solve() {
         }
 
     val routes = findRoutes(listOf(), caves["start"]!!)
-    routes.forEach{ println(it)}
+
+    val routesReachingEnd = routes.filter { it.contains(caves["end"]) }
+        .count()
+
+    return listOf(routesReachingEnd)
+
 }
 
 fun findRoutes(path: List<Cave>, cave: Cave): MutableList<MutableList<Cave>> {
