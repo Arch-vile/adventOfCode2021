@@ -96,6 +96,8 @@ class Matrix<T>(input: List<List<T>>) {
         return found.toList()
     }
 
+    fun all(): List<Entry<T>> = data.flatten()
+
     fun rotateCW(): Matrix<T> {
         val foo = IntRange(0, data[0].size - 1)
             .map { x ->
@@ -126,6 +128,18 @@ class Matrix<T>(input: List<List<T>>) {
         } else false
     }
 
+    // Returns entries relative to the given point
+    // Could return less if goes out of bounds
+    fun getRelativeAt(x: Int, y: Int, getRelative: List<Pair<Int, Int>>): List<Entry<T>> {
+        return getRelative
+            .map {
+                val relY = y+it.second
+                val relX =x+it.first
+                Pair(relX, relY)
+            }
+            .filter { it.second < data.size && it.second >= 0 && it.first < data[0].size && it.first >= 0 }
+            .map { data[it.second][it.first] }
+    }
 
     companion object {
         private fun <T> initialize(width: Long, height: Long, init: (x: Int, y: Int) -> T): List<List<T>> {
