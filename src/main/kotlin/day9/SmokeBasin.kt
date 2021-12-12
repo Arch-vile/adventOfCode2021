@@ -1,38 +1,30 @@
 package day9
 
+import utils.Entry
 import utils.Matrix
 import utils.read
 
-
 fun main() {
-    solve()
-        .let { println(it) }
+    solve().let { println(it) }
 }
 
-fun solve(): List<Int> {
+val surroundingCoords = listOf(
+    Pair(0, -1),
+    Pair(-1, 0),
+    Pair(1, 0),
+    Pair(0, 1)
+)
 
-    val input =
-        read("./src/main/resources/day9Input.txt")
-//        listOf(
-//            "2199943210",
-//            "3987894921",
-//            "9856789892",
-//            "8767896789",
-//            "9899965678" )
-                    .map { it.map { it.toString().toInt() } }
+fun solve(): List<Int> {
+    val input = read("./src/main/resources/day9Input.txt")
+        .map { it.map { it.toString().toInt() } }
 
     val floor = Matrix(input)
-
     val lowestPoints = floor.all()
         .filter { current ->
             val surrounding = floor.getRelativeAt(
                 current.x, current.y,
-                listOf(
-                    Pair(0, -1),
-                    Pair(-1, 0),
-                    Pair(1, 0),
-                    Pair(0, 1)
-                )
+                surroundingCoords
             )
 
             val lowerNeighbours = surrounding
@@ -41,10 +33,30 @@ fun solve(): List<Int> {
             lowerNeighbours.count() == surrounding.count()
         }
 
-//    lowestPoints.forEach { println(it) }
+    val basins = lowestPoints.map { basin(floor, it) }
+    val largestBasins = basins.sortedBy { it.size }.reversed().take(3)
 
-    val riskLevelSum = lowestPoints.map { it.value+1 }.sum()
-
-    return listOf(riskLevelSum)
+    return listOf(lowestPoints.map { it.value + 1 }.sum(),
+        largestBasins.map { it.size }.reduce { acc, next -> acc * next }
+    )
 }
 
+fun basin(floor: Matrix<Int>, start: Entry<Int>): Set<Entry<Int>> {
+    var expanded = setOf(start)
+
+    do {
+        var oldSize = expanded.size
+        expanded = expand(floor, expanded)
+    } while (expanded.size != oldSize)
+
+    return expanded;
+}
+
+fun expandSingle(floor: Matrix<Int>, startFrom: Entry<Int>): List<Entry<Int>> {
+    return floor.getRelativeAt(startFrom.x, startFrom.y, surroundingCoords)
+        .filter { it.value > startFrom.value && it.value != 9 }
+}
+
+fun expand(floor: Matrix<Int>, current: Set<Entry<Int>>): Set<Entry<Int>> {
+    return current.map { expandSingle(floor, it) }.flatten().toSet().plus(current)
+}
