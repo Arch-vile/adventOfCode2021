@@ -8,7 +8,7 @@ fun main() {
     solve().let { println(it) }
 }
 
-fun solve(): List<Int> {
+fun solve(): Pair<Int, String> {
     val lines = read("./src/main/resources/day13Input.txt")
     val points = lines.takeWhile { it.isNotEmpty() }
         .map { it.split(",") }
@@ -30,14 +30,16 @@ fun solve(): List<Int> {
         x,y -> if(points.contains(Point(x.toLong(),y.toLong()))) "#" else " "
     }
 
-    val folded = fold(folds[0], sheet)
+    val foldedOnce = fold(folds[0], sheet)
+    val folded = folds.fold(sheet) {
+        acc, next -> fold(next,acc)
+    }
 
-    val notBlanks = folded.all().map { it.value }
+    val notBlanks = foldedOnce.all().map { it.value }
         .filter { it.isNotBlank() }
         .count()
 
-
-    return listOf(notBlanks)
+    return Pair(notBlanks, folded.toString())
 
 }
 
