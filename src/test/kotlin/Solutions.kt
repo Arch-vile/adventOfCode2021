@@ -48,7 +48,7 @@ class Solutions {
 
     @Test
     fun day10() {
-        assertEquals(listOf(321237L),day10.solve())
+        assertEquals(listOf(321237L,2360030859L),day10.solve())
     }
 
     @Test

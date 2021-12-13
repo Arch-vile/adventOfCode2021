@@ -1,7 +1,10 @@
 package utils
 
+import java.lang.Integer.min
+
 data class Entry<T>(val x: Int, val y: Int, val value: T)
 data class Size(val width: Int, val height: Int)
+data class Cursor(val x: Int, val y: Int)
 
 class Matrix<T>(input: List<List<T>>) {
 
@@ -113,6 +116,7 @@ class Matrix<T>(input: List<List<T>>) {
     }
 
     fun height() = data.size
+    fun width() = data[0].size
 
     override fun equals(other: Any?): Boolean {
         return if(other is Matrix<*>) {
@@ -139,6 +143,33 @@ class Matrix<T>(input: List<List<T>>) {
             }
             .filter { it.second < data.size && it.second >= 0 && it.first < data[0].size && it.first >= 0 }
             .map { data[it.second][it.first] }
+    }
+
+    fun flipHorizontal(): Matrix<T> = Matrix(data.reversed().map { it.map { it.value } })
+
+    fun flipVertical(): Matrix<T> = Matrix(data.map { it.reversed().map { it.value } })
+
+    fun <V> combine(other: Matrix<V>, combiner: (Entry<T>, Entry<V>) -> T) =
+        combine(other, Cursor(0,0), combiner)
+
+    // Combine values in given matrix with this one.
+    // If matrices are of different size (or not positioned evenly) the size
+    // of this matrix will not change (overflow values are ignored).
+    // Combine will start from given starting cursor location.
+    fun <V> combine(other: Matrix<V>, start: Cursor, combiner: (Entry<T>, Entry<V>) -> T) {
+        val thisTileHeight = height() - start.y
+        val thisTileWidth = width() - start.x
+        val otherTileHeight = other.height()
+        val otherTileWidth = other.width()
+
+        val combineTileHeight = min(thisTileHeight, otherTileHeight)
+        val combineTileWidth = min(thisTileWidth, otherTileWidth)
+
+        for(y in start.y until start.y+combineTileHeight) {
+           for(x in start.x until start.x+combineTileWidth) {
+               replace(x,y) {current -> combiner(current, other.data[y - start.y][x - start.x])}
+           }
+        }
     }
 
     companion object {
