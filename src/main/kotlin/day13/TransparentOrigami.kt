@@ -61,10 +61,6 @@ fun foldY(foldAt: Long, sheet: Matrix<String>): Matrix<String> {
 
     val lowerFlipped = lowerPart.flipHorizontal()
 
-    if(lowerPart.height() != upperPart.height() ||
-        lowerPart.width() != upperPart.width()) {
-        Error("Different size, please fix")
-    }
     upperPart.combine(lowerFlipped) {
             u, l -> if (u.value.isNotBlank() || l.value.isNotBlank()) "#" else " "
     }
