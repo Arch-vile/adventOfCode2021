@@ -69,4 +69,10 @@ class Solutions {
         """.trimIndent()
             ),day13.solve())
     }
+
+
+    @Test
+    fun day14() {
+        assertEquals(listOf(3587,3906445077999),day14.solve())
+    }
 }
