@@ -2,7 +2,7 @@ package utils
 
 import java.lang.Integer.min
 
-data class Entry<T>(val x: Int, val y: Int, val value: T)
+data class Entry<T>(val cursor: Cursor, val value: T)
 data class Size(val width: Int, val height: Int)
 data class Cursor(val x: Int, val y: Int)
 
@@ -18,12 +18,15 @@ class Matrix<T>(input: List<List<T>>) {
             for(x in 0 until columns) {
                if(input[y].size != columns)
                    throw Error("all rows must have equal amount of columns")
-               row.add(Entry(x,y,input[y][x]))
+               row.add(Entry(Cursor(x,y),input[y][x]))
             }
         }
     }
 
     constructor(width: Long, height: Long, init: (Int,Int) -> T) : this(initialize(width, height, init))
+
+    fun get(x: Int, y: Int) = data[y][x]
+
 
     fun find(value: T): Entry<T>? {
         for (y in 0 until data.size) {
@@ -35,7 +38,7 @@ class Matrix<T>(input: List<List<T>>) {
     }
 
     fun replace(current: Entry<T>, value: T) {
-        data[current.y][current.x] = current.copy(value=value)
+        data[current.cursor.y][current.cursor.y] = current.copy(value=value)
     }
 
     fun replace(x: Int, y: Int, newValue: (Entry<T>) -> T) {
@@ -134,11 +137,11 @@ class Matrix<T>(input: List<List<T>>) {
 
     // Returns entries relative to the given point
     // Could return less if goes out of bounds
-    fun getRelativeAt(x: Int, y: Int, getRelative: List<Pair<Int, Int>>): List<Entry<T>> {
+    fun getRelativeAt(cursor: Cursor, getRelative: List<Cursor>): List<Entry<T>> {
         return getRelative
             .map {
-                val relY = y+it.second
-                val relX =x+it.first
+                val relY = cursor.y+it.y
+                val relX =cursor.x+it.x
                 Pair(relX, relY)
             }
             .filter { it.second < data.size && it.second >= 0 && it.first < data[0].size && it.first >= 0 }
@@ -170,6 +173,11 @@ class Matrix<T>(input: List<List<T>>) {
                replace(x,y) {current -> combiner(current, other.data[y - start.y][x - start.x])}
            }
         }
+    }
+
+    fun <V> map(mapper: (Entry<T>) -> V): Matrix<V> {
+        val newData = data.map { row -> row.map { cell -> mapper(cell) } }
+       return Matrix(newData)
     }
 
     companion object {

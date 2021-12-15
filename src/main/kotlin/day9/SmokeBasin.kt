@@ -1,5 +1,6 @@
 package day9
 
+import utils.Cursor
 import utils.Entry
 import utils.Matrix
 import utils.read
@@ -9,10 +10,10 @@ fun main() {
 }
 
 val surroundingCoords = listOf(
-    Pair(0, -1),
-    Pair(-1, 0),
-    Pair(1, 0),
-    Pair(0, 1)
+    Cursor(0, -1),
+    Cursor(-1, 0),
+    Cursor(1, 0),
+    Cursor(0, 1)
 )
 
 fun solve(): List<Int> {
@@ -23,7 +24,7 @@ fun solve(): List<Int> {
     val lowestPoints = floor.all()
         .filter { current ->
             val surrounding = floor.getRelativeAt(
-                current.x, current.y,
+                current.cursor,
                 surroundingCoords
             )
 
@@ -53,7 +54,7 @@ fun basin(floor: Matrix<Int>, start: Entry<Int>): Set<Entry<Int>> {
 }
 
 fun expandSingle(floor: Matrix<Int>, startFrom: Entry<Int>): List<Entry<Int>> {
-    return floor.getRelativeAt(startFrom.x, startFrom.y, surroundingCoords)
+    return floor.getRelativeAt(startFrom.cursor, surroundingCoords)
         .filter { it.value > startFrom.value && it.value != 9 }
 }
 
