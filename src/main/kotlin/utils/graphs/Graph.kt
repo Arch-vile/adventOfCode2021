@@ -1,5 +1,9 @@
 package utils.graphs
 
+import java.time.LocalDateTime
+import java.util.Date
+import kotlin.concurrent.timer
+
 
 // Not immutable by any means
 data class Node<T>(val value: T) {
@@ -43,9 +47,14 @@ data class Edge<T>(var distance: Long, var target: Node<T>) {
 }
 
 fun <T> shortestPath(start: Node<T>, target: Node<T>): Long? {
-    val unvisitedNodes = allNodes(start).toMutableSet()
+    val unvisitedNodes = allNodes(start)
+        .groupBy{ node -> node }
+        .mapValues { entry -> entry.value[0] }
+        .toMutableMap()
+
     val tentativeDistances =
-        unvisitedNodes.groupBy({ it }, { 0 }).mapValues { Long.MAX_VALUE }.toMutableMap()
+        unvisitedNodes.mapValues { entry -> Long.MAX_VALUE }
+            .toMutableMap()
     tentativeDistances[start] = 0
 
     var current = start
@@ -62,6 +71,7 @@ fun <T> shortestPath(start: Node<T>, target: Node<T>): Long? {
             return tentativeDistances[target]
         }
         else {
+            // TODO: This sorting slows things down alot
             current = tentativeDistances.entries.sortedBy { it.value }
                 .first { unvisitedNodes.contains(it.key) }.key
         }

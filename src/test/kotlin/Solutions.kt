@@ -75,4 +75,10 @@ class Solutions {
     fun day14() {
         assertEquals(listOf(3587,3906445077999),day14.solve())
     }
+
+    @Test
+    fun day15() {
+        // Part 2 takes to long to run
+        assertEquals(listOf(388L),day15.solve())
+    }
 }
