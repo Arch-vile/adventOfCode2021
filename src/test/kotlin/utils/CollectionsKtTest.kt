@@ -2,6 +2,7 @@ package utils
 
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
+import kotlin.test.assertContains
 
 internal class CollectionsKtTest {
 
@@ -45,5 +46,24 @@ internal class CollectionsKtTest {
     }
 
 
+    @Test
+    fun sortedLookup_override_values() {
+        val foo = SortedLookup<String,Long>()
+        foo.add("foo",1)
+        foo.add("foo",3)
+        assertEquals(3, foo.get("foo"))
+    }
+
+    @Test
+    fun sortedLookup_same_value_for_many_keys() {
+        val foo = SortedLookup<String,Long>()
+        foo.add("foo",1)
+        foo.add("bar",1)
+
+        assertEquals(
+            setOf("foo","bar"),
+            foo.sortedSequence().map { it.first }
+        )
+    }
 
 }

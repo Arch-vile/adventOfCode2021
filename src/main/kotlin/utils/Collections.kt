@@ -62,7 +62,7 @@ fun <T> intersect(data: List<List<T>>): List<T> {
 
 
 fun <K, V> merge(maps: List<Map<K, V>>, merger: (V, V) -> V): Map<K, V> {
-    return maps.reduce{ acc,next -> merge(acc,next,merger)}
+    return maps.reduce { acc, next -> merge(acc, next, merger) }
 }
 
 fun <K, V> merge(map1: Map<K, V>, map2: Map<K, V>, merger: (V, V) -> V): Map<K, V> {
@@ -75,4 +75,48 @@ fun <K, V> merge(map1: Map<K, V>, map2: Map<K, V>, merger: (V, V) -> V): Map<K, 
             mutable[it.key] = it.value
     }
     return mutable.toMap()
+}
+
+fun <T> Collection<T>.splitAfter(separator: T): List<List<T>> {
+    val result = mutableListOf<MutableList<T>>()
+
+    var newSublist = true
+    for (item in this) {
+        if (newSublist)
+            result += mutableListOf<T>()
+        result.last() += item
+        newSublist = (item == separator)
+    }
+
+    return result
+}
+
+class SortedLookup<K, V : Comparable<V>> {
+    private val valueLookup = mutableMapOf<K, V>()
+    private val sortedByValue =
+        sortedSetOf<Pair<K, V>>(Comparator<Pair<K, V>>
+        { o1, o2 -> o1.second.compareTo(o2.second) }
+            .thenComparing { o1, o2 -> o1.first.hashCode().compareTo(o2.first.hashCode())  })
+
+    fun add(key: K, value: V) {
+        valueLookup[key] = value
+        sortedByValue.add(Pair(key, value))
+    }
+
+    fun drop(key: K): Pair<K, V> {
+        valueLookup.remove(key)
+        val toRemove = sortedByValue.first { it.first == key }
+        sortedByValue.remove(toRemove)
+        return toRemove
+    }
+
+    fun containsKey(key: K) = valueLookup.contains(key)
+
+    fun get(key: K) = valueLookup[key]
+
+    fun sortedSequence() = sortedByValue.asSequence()
+
+    fun size() = valueLookup.size
+
+
 }

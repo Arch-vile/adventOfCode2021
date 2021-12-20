@@ -1,8 +1,6 @@
 package utils.graphs
 
-import java.time.LocalDateTime
-import java.util.Date
-import kotlin.concurrent.timer
+import utils.SortedLookup
 
 
 // Not immutable by any means
@@ -47,48 +45,55 @@ data class Edge<T>(var distance: Long, var target: Node<T>) {
 }
 
 fun <T> shortestPath(start: Node<T>, target: Node<T>): Long? {
-    val unvisitedNodes = allNodes(start)
-        .groupBy{ node -> node }
-        .mapValues { entry -> entry.value[0] }
-        .toMutableMap()
 
-    val tentativeDistances =
-        unvisitedNodes.mapValues { entry -> Long.MAX_VALUE }
-            .toMutableMap()
-    tentativeDistances[start] = 0
+    val unvisitedNodes = SortedLookup<Node<T>, Long>()
+
+    allNodes(start)
+        .forEach {
+            unvisitedNodes.add(it, Long.MAX_VALUE)
+        }
+    unvisitedNodes.add(start, 0)
 
     var current = start
     while (true) {
-        val edges = current.edges.filter { unvisitedNodes.contains(it.target) }
+        val edges = current.edges.filter { unvisitedNodes.containsKey(it.target) }
         edges.forEach { edge ->
-            val newDistance = tentativeDistances[current]!! + edge.distance
-            if (newDistance < tentativeDistances[edge.target]!!)
-                tentativeDistances[edge.target] = newDistance
+            val newDistance = unvisitedNodes.get(current)!! + edge.distance
+            if (newDistance < unvisitedNodes.get(edge.target)!!)
+                unvisitedNodes.add(edge.target, newDistance)
         }
-        unvisitedNodes.remove(current)
+        val removed = unvisitedNodes.drop(current)
 
-        if (!unvisitedNodes.contains(target)) {
-            return tentativeDistances[target]
+        if (removed.first === target) {
+            return removed.second
         }
         else {
-            // TODO: This sorting slows things down alot
-            current = tentativeDistances.entries.sortedBy { it.value }
-                .first { unvisitedNodes.contains(it.key) }.key
+            current = unvisitedNodes.sortedSequence()
+                .filter { unvisitedNodes.containsKey(it.first) }
+                .first().first
         }
     }
 }
 
-fun <T> route(start: Node<T>, target: Node<T>, tentativeDistances: MutableMap<Node<T>, Long>): List<Node<T>> {
+fun <T> route(
+    start: Node<T>,
+    target: Node<T>,
+    tentativeDistances: MutableMap<Node<T>, Long>
+): List<Node<T>> {
     return backtrack(target, start, tentativeDistances)
 }
 
-fun <T> backtrack(current: Node<T>, target: Node<T>, tentativeDistances: MutableMap<Node<T>, Long>): List<Node<T>> {
-    if(current == target) {
+fun <T> backtrack(
+    current: Node<T>,
+    target: Node<T>,
+    tentativeDistances: MutableMap<Node<T>, Long>
+): List<Node<T>> {
+    if (current == target) {
         return listOf()
     }
 
     val next = current.edges.minByOrNull { tentativeDistances[it.target]!! }!!.target
-    return listOf(next).plus(route(next,target,tentativeDistances))
+    return listOf(next).plus(route(next, target, tentativeDistances))
 }
 
 fun <T> allNodes(start: Node<T>): Set<Node<T>> {

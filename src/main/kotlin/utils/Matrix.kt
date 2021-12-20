@@ -29,16 +29,17 @@ class Matrix<T>(input: List<List<T>>) {
 
 
     fun find(value: T): Entry<T>? {
-        for (y in 0 until data.size) {
-            for (x in 0 until data.first().size) {
-                if (data[y][x].value == value) return data[y][x]
+        for (y in 0 until height()) {
+            for (x in 0 until width()) {
+                if (data[y][x].value == value)
+                    return data[y][x]
             }
         }
         return null;
     }
 
     fun replace(current: Entry<T>, value: T) {
-        data[current.cursor.y][current.cursor.y] = current.copy(value=value)
+        data[current.cursor.y][current.cursor.x] = current.copy(value=value)
     }
 
     fun replace(x: Int, y: Int, newValue: (Entry<T>) -> T) {

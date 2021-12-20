@@ -2,18 +2,20 @@ package utils
 
 import java.lang.Long.max
 import java.lang.Long.min
+import kotlin.math.pow
 
-data class Point(val x: Long, val y: Long)
+data class Point(val x: Long, val y: Long, val z: Long = 0) {
+
+    fun distance(to: Point) =
+        ((x.toDouble() - to.x).pow(2.0) +
+                (y.toDouble() - to.y).pow(2.0) +
+                (z.toDouble() - to.z).pow(2.0)).pow(0.5);
+
+}
 data class Line(val start: Point, val end: Point)
 
 // Only for horizontal, vertical and 45 degree lines for now
 fun pointsInLine(line: Line): List<Point> {
-
-   val n = listOf("hello", "paul").sumOf { it.length }
-
-    val a=listOf(1,2)
-
-
     // Horizontal/vertical
     if (line.start.x == line.end.x || line.start.y == line.end.y) {
         return (min(line.start.y, line.end.y)..max(line.start.y, line.end.y))

@@ -18,7 +18,7 @@ fun solve(): List<Long> {
 
     return listOf(
         solve1(dataMatrix),
-//        solve2(dataMatrix)
+        solve2(dataMatrix)
     )
 }
 

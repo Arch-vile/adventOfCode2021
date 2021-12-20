@@ -1,6 +1,5 @@
-import day4.solve
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestTemplate
+import java.lang.Math.random
 import kotlin.test.assertEquals
 
 class Solutions {
@@ -23,7 +22,7 @@ class Solutions {
     }
     @Test
     fun day4() {
-        assertEquals(listOf(87456,15561),solve())
+        assertEquals(listOf(87456,15561),day4.solve())
     }
 
     @Test
@@ -79,6 +78,6 @@ class Solutions {
     @Test
     fun day15() {
         // Part 2 takes to long to run
-        assertEquals(listOf(388L),day15.solve())
+        assertEquals(listOf(388L,2819L),day15.solve())
     }
 }
